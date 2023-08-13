@@ -19,15 +19,25 @@ class RegistrationType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Name',
+                'attr' => [
+                    'class' => 'w-full py-2 px-3 border border-gray-300 rounded-md', // Apply Tailwind classes
+                ],
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Email',
+                'attr' => [
+                    'class' => 'w-full py-2 px-3 border border-gray-300 rounded-md', // Apply Tailwind classes
+                ],
             ])
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'invalid_message' => 'The password fields must match.',
-                'first_options' => ['label' => 'Password'],
-                'second_options' => ['label' => 'Repeat Password'],
+                'first_options' => ['label' => 'Password', 'attr' => [
+                    'class' => 'w-full py-2 px-3 border border-gray-300 rounded-md', // Apply Tailwind classes
+                ],],
+                'second_options' => ['label' => 'Repeat Password', 'attr' => [
+                    'class' => 'w-full py-2 px-3 border border-gray-300 rounded-md', // Apply Tailwind classes
+                ],],
             ]);
     }
 
