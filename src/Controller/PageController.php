@@ -3,13 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Page;
+use App\Entity\User;
 use App\Form\PageType;
 use App\Repository\PageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/page')]
 class PageController extends AbstractController
@@ -23,13 +26,45 @@ class PageController extends AbstractController
     }
 
     #[Route('/new', name: 'app_page_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $page = new Page();
+        $user = $this->getUser();
+
         $form = $this->createForm(PageType::class, $page);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $page->setAuthor($user);
+
+            $image = $form->get('image')->getData();
+
+            if ($image) {
+                $originalFilename = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
+                // this is needed to safely include the file name as part of the URL
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$image->guessExtension();
+
+                // Move the file to the directory where brochures are stored
+                try {
+                    $image->move(
+                        $this->getParameter('image_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // ... handle exception if something happens during file upload
+                }
+
+                // updates the 'imagename' property to store the PDF file name
+                // instead of its contents
+                $page->setImage($newFilename);
+            }
+
+            // ... persist the $product variable or any other work
+
+
             $entityManager->persist($page);
             $entityManager->flush();
 
@@ -37,8 +72,8 @@ class PageController extends AbstractController
         }
 
         return $this->render('page/new.html.twig', [
-            'page' => $page,
             'form' => $form,
+            'page' => $page
         ]);
     }
 
