@@ -3,7 +3,29 @@
 {% block title %}Homepage{% endblock %}
 
 {% block body %}
-
-    <p>Welcome to your homepage, {{ app.user.name }}!</p>
-
+    <body>
+    <div style="text-align: center; margin-top: 2rem;">
+        <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl
+                        dark:text-white">Welcome to your homepage, {{ app.user.name }}!</h1>
+        <br><br>
+        <p>Here are the available options:</p>
+        <br>
+        <ul>
+            <li class="font-bold leading-tight tracking-tight text-gray-900
+                        dark:text-white"><a href={{ path('app_page_new') }}>Create New Page</a></li>
+            <li class="font-bold leading-tight tracking-tight text-gray-900
+                        dark:text-white"><a href={{ path('app_page_index') }}>See All Pages</a></li>
+            {% if is_granted("ADMIN") %}
+                <li class="font-bold leading-tight tracking-tight text-gray-900
+                        dark:text-white"><a href={{ path('app_role_index') }}>Check roles</a></li>
+                <li class="font-bold leading-tight tracking-tight text-gray-900
+                        dark:text-white"><a href={{ path('app_navigation_index') }}>Manipulate navigation elements</a></li>
+                <li class="font-bold leading-tight tracking-tight text-gray-900
+                        dark:text-white"><a href={{ path('app_user_index') }}>See users</a></li>
+                <li class="font-bold leading-tight tracking-tight text-gray-900
+                        dark:text-white"><a href={{ path('app_user_new') }}>Create new user</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    </body>
 {% endblock %}

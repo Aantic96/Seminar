@@ -5,8 +5,11 @@ namespace App\Controller;
 use App\Entity\Page;
 use App\Entity\User;
 use App\Form\PageType;
+use App\Repository\NavigationRepository;
 use App\Repository\PageRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
@@ -17,17 +20,21 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/page')]
-class PageController extends AbstractController
+//#[Security("is_granted('USER')")]
+class PageController extends MainController
 {
 
-    public function __construct(protected SluggerInterface $slugger)
-    {}
+    public function __construct(protected SluggerInterface $slugger, protected NavigationRepository $navigationRepository)
+    {
+        parent::__construct($this->navigationRepository);
+    }
 
     #[Route('/', name: 'app_page_index', methods: ['GET'])]
     public function index(PageRepository $pageRepository): Response
     {
         return $this->render('page/index.html.twig', [
             'pages' => $pageRepository->findAll(),
+            'navigations' => $this->getNavigationElements()
         ]);
     }
 
@@ -55,7 +62,8 @@ class PageController extends AbstractController
 
         return $this->render('page/new.html.twig', [
             'form' => $form,
-            'page' => $page
+            'page' => $page,
+            'navigations' => $this->getNavigationElements()
         ]);
     }
 
@@ -64,10 +72,12 @@ class PageController extends AbstractController
     {
         return $this->render('page/show.html.twig', [
             'page' => $page,
+            'navigations' => $this->getNavigationElements()
         ]);
     }
 
     #[Route('/{id}/edit', name: 'app_page_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('EDIT', subject: 'page')]
     public function edit(Request $request, Page $page, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $form = $this->createForm(PageType::class, $page);
@@ -85,15 +95,21 @@ class PageController extends AbstractController
         return $this->render('page/edit.html.twig', [
             'page' => $page,
             'form' => $form,
+            'navigations' => $this->getNavigationElements()
         ]);
     }
 
     #[Route('/{id}', name: 'app_page_delete', methods: ['POST'])]
+    #[IsGranted('DELETE', subject: 'page')]
     public function delete(Request $request, Page $page, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete' . $page->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($page);
-            $entityManager->flush();
+            try{
+                $entityManager->remove($page);
+                $entityManager->flush();
+            }
+            catch (\Exception $exception)
+            {}
         }
 
         return $this->redirectToRoute('app_page_index', [], Response::HTTP_SEE_OTHER);

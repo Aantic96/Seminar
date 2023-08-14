@@ -5,7 +5,6 @@
 {% block body %}
 
     <main class="bg-gray-50 dark:bg-gray-90">
-
         <div>
             <button class="btn text-white bg-gray-600 hover:bg-gray-800 focus:ring-4 focus:outline-none
             focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600
@@ -13,7 +12,6 @@
                 <a href="{{ path('app_page_index') }}">Go to all pages</a>
             </button>
         </div>
-
 
     <section>
 
@@ -29,27 +27,24 @@
                     <img class="flex h-screen w-full bg-gray-200 justify-center items-center" src="{{ asset('uploads/images/' ~ page.image ) }}" alt="Image">
                 </div>
                 <div style="overflow-wrap: break-word" class="text-center">{{ page.content }}</div>
-
-
             </div>
 
             <div>
+                {% if is_granted('EDIT', page) == true %}
                 <button class="btn text-white bg-yellow-500 hover:bg-yellow-700 focus:ring-4 focus:outline-none
             focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600
             dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                     <a href="{{ path('app_page_edit', {'id': page.id}) }}">Edit</a>
                 </button>
+                {% endif %}
             </div>
-
 
             <div>
-                {{ include('page/_delete_form.html.twig') }}
+                {% if is_granted('DELETE', page) == true %}
+                  {{ include('page/_delete_form.html.twig') }}
+                {% endif %}
             </div>
         </div>
-
-
-
-
     </section>
     </main>
 {% endblock %}

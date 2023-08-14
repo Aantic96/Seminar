@@ -6,13 +6,15 @@ use App\Entity\Navigation;
 use App\Form\NavigationType;
 use App\Repository\NavigationRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/navigation')]
-class NavigationController extends AbstractController
+#[Security("is_granted('ADMIN')")]
+class NavigationController extends MainController
 {
     #[Route('/', name: 'app_navigation_index', methods: ['GET'])]
     public function index(NavigationRepository $navigationRepository): Response
@@ -30,6 +32,7 @@ class NavigationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             $entityManager->persist($navigation);
             $entityManager->flush();
 
@@ -39,6 +42,7 @@ class NavigationController extends AbstractController
         return $this->render('navigation/new.html.twig', [
             'navigation' => $navigation,
             'form' => $form,
+            'navigations' => $this->getNavigationElements()
         ]);
     }
 
@@ -47,6 +51,7 @@ class NavigationController extends AbstractController
     {
         return $this->render('navigation/show.html.twig', [
             'navigation' => $navigation,
+            'navigations' => $this->getNavigationElements()
         ]);
     }
 
@@ -65,6 +70,7 @@ class NavigationController extends AbstractController
         return $this->render('navigation/edit.html.twig', [
             'navigation' => $navigation,
             'form' => $form,
+            'navigations' => $this->getNavigationElements()
         ]);
     }
 

@@ -3,24 +3,40 @@
 {% block title %}Role{% endblock %}
 
 {% block body %}
-    <h1>Role</h1>
 
-    <table class="table">
-        <tbody>
+
+    <div class="relative overflow-x-auto">
+        <table class="text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-                <th>Id</th>
-                <td>{{ role.id }}</td>
+                <th scope="col" class="px-6 py-3">
+                    ID
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Name
+                <th scope="col" class="px-6 py-3">
+                    Actions
+                </th>
             </tr>
-            <tr>
-                <th>Name</th>
-                <td>{{ role.name }}</td>
+            </thead>
+            <tbody>
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    {{ role.id }}
+                </th>
+                <td class="px-6 py-4">
+                    {{ role.name }}
+                </td>
+                <td class="px-6 py-4">
+                    <button class="btn text-white bg-yellow-500 hover:bg-yellow-700 focus:ring-4 focus:outline-none
+            focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600
+            dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                        <a href="{{ path('app_role_edit', {'id': role.id}) }}">Edit</a>
+                    </button>
+                    {{ include('role/_delete_form.html.twig') }}
+                </td>
             </tr>
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_role_index') }}">back to list</a>
-
-    <a href="{{ path('app_role_edit', {'id': role.id}) }}">edit</a>
-
-    {{ include('role/_delete_form.html.twig') }}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

@@ -26,12 +26,21 @@
                     <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         <img style="max-width: 10rem" src="{{ asset('uploads/images/' ~ page.image ) }}" alt="Image"></td>
                     <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        <button class="btn text-white bg-yellow-500 hover:bg-yellow-700 focus:ring-4 focus:outline-none
+
+                        {% if is_granted('EDIT', page) == true %}
+                            <button class="btn text-white bg-yellow-500 hover:bg-yellow-700 focus:ring-4 focus:outline-none
             focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600
             dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-                            <a href="{{ path('app_page_edit', {'id': page.id}) }}">Edit</a>
-                            <button style="padding: 0.2rem">{{ include('page/_delete_form.html.twig') }}</button>
-                        </button>
+                                <a href="{{ path('app_page_edit', {'id': page.id}) }}">Edit</a>
+                            </button>
+                        {% endif %}
+
+
+
+                        {% if is_granted('DELETE', page) == true %}
+                        <button style="padding: 0.2rem">{{ include('page/_delete_form.html.twig') }}</button>
+                        {% endif %}
+
                     </td>
                 </tr>
             {% else %}
