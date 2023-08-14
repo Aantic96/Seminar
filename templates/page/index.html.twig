@@ -12,7 +12,7 @@
                 <th scope="col" class="px-6 py-3">Title</th>
                 <th scope="col" class="px-6 py-3">Content</th>
                 <th scope="col" class="px-6 py-3">Image</th>
-                <th scope="col" class="px-6 py-3">actions</th>
+                <th scope="col" class="px-6 py-3">Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -36,7 +36,7 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="5">no records found</td>
+                    <td colspan="5">No pages found</td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -49,6 +49,4 @@
             dark:hover:bg-primary-700 dark:focus:ring-primary-800">
             <a href="{{ path('app_page_new') }}">Create new</a></button>
     </div>
-
-
 {% endblock %}
